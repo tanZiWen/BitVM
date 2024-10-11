@@ -5,3 +5,4 @@
 )
 
 ## 基础概念
+[Lamport签名](https://github.com/tanZiWen/BitVM/blob/master/Lamport%20%E7%AD%BE%E5%90%8D.md)
