@@ -6,3 +6,5 @@
 
 ## 基础概念
 [Lamport签名](https://github.com/tanZiWen/BitVM/blob/master/Lamport%20%E7%AD%BE%E5%90%8D.md)
+
+[锁定脚本和解锁脚本](https://github.com/tanZiWen/BitVM/blob/master/%E9%94%81%E5%AE%9A%E8%84%9A%E6%9C%AC%E5%92%8C%E8%A7%A3%E9%94%81%E8%84%9A%E6%9C%AC.md)
