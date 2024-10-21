@@ -108,7 +108,7 @@ SNARK 验证器程序 f(x) = y 被分割为 f<sub>1</sub>, f<sub>2</sub>, ..., f
 
 最后，一个非交互式论证，如果验证者在 λ + |ϕ|的多项式时间内运行，且证明大小在 λ 的多项式范围内，则被称为（预处理的）简洁非交互式论证（SNARG）。需要注意的是，尽管我们稍后会使用 [7] 中的实现，但我们并不关心或使用零知识属性，也不使用更强的简洁非交互式知识论证（SNARKs）。
 
-### 3.3 Lamport数字签名方案
+### 3.3 [Lamport数字签名方案](https://github.com/tanZiWen/BitVM/blob/master/Lamport%20%E7%AD%BE%E5%90%8D.md)
 
 设 $\( h : X \rightarrow Y \)$ 为一个单向函数，其中 $\( X := \{0, 1\}^*\) ， \( Y := \{0, 1\}^\lambda \)$ ，其中 $\( \lambda \)$ 是一个给定的安全参数。设 $\( m \in \{0, 1\}^\ell \)$ 为一个 $\(\ell\)$ 位的消息，其中 $\( \ell \in \mathbb{N} > 0\)$。Lamport数字签名方案 [12] Lamp 由一组三个算法（KeyGen、Sig 和 Vrfy）组成：
 
