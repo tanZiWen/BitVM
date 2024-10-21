@@ -147,7 +147,7 @@ Lamport签名是一种安全的一次性签名。我们使用 $\( sk_M \)$ 和 $
 
 – **时间锁**。时间锁会将交易输出锁定到未来的某个指定时间（绝对时间锁）或直到交易上链后的特定时间（相对时间锁）。我们将前者表示为 AbsTimelock(Δ)，后者表示为 RelTimelock(Δ)。在后续描述中，我们将时间锁与其他花费条件结合使用。例如，如果 UTXO Tx.out1 的锁定脚本为 lockScript := RelTimelock(Δ) ^ CheckSig(pkU)，则用户 U 可以在 Tx.out1 发布上链后，经过一定时间 T 之后花费该 UTXO。
 
-– **Taproot 树 [23]**，或称为 Taptrees，使得 UTXO 可以通过满足多种花费条件之一来花费。这些花费条件是 Merkle 树的 (Tap) 叶子。为了花费具有 Taptree 作为锁定脚本的 UTXO，用户需要提供某个叶子的证明，以及该叶子在 Taptree 中的 Merkle 包含证明。接下来，我们将 Taptree 锁定脚本的 Tap 叶子表示为 {leaf1, ..., leafr}；当用户满足脚本 leaf i 以解锁交易 Tx 的第 j 个 UTXO 时，我们将对应的输入写为 (Tx, j, {leaf i}`。每当用户通过 Taptree 的 Tap 叶子花费 UTXO 时，我们假设用户已提供了该 Tap 叶子的有效 Merkle 包含证明。
+– **Taproot 树 [23]**，或称为 Taptrees，使得 UTXO 可以通过满足多种花费条件之一来花费。这些花费条件是 Merkle 树的 (Tap) 叶子。为了花费具有 Taptree 作为锁定脚本的 UTXO，用户需要提供某个叶子的证明，以及该叶子在 Taptree 中的 Merkle 包含证明。接下来，我们将 Taptree 锁定脚本的 Tap 叶子表示为 {leaf1, ..., leafr}；当用户满足脚本 leaf i 以解锁交易 Tx 的第 j 个 UTXO 时，我们将对应的输入写为 (Tx, j, {leaf<sub>i</sub>})。每当用户通过 Taptree 的 Tap 叶子花费 UTXO 时，我们假设用户已提供了该 Tap 叶子的有效 Merkle 包含证明。
 
 – **其他条件**。我们用 True 表示始终满足的条件，用 False 表示永远无法满足的条件。在后一种情况下，代币无法赎回，它们将被销毁。
 
