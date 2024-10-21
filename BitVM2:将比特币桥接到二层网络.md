@@ -224,7 +224,7 @@ Lamport签名是一种安全的一次性签名。我们使用 $\( sk_M \)$ 和 $
 - …
 - **zₖ = fₖ(zₖ₋₁)**
 
-其中，**z₀ = x** 为输入，**zₖ = y** 为输出。对于集合 **{z₀, z₁, ..., zₖ}** 中的每个元素，操作方 **O** 创建一个新的 **Lamport** 密钥对 **(sk<sub>z₀</sub>, pk<sub>z₀</sub>), (sk<sub>z₁</sub>, pk<sub>z₁</sub>), ..., (sk<sub>zₖ</sub>sub>, pk<sub>zₖ</sub>)**。
+其中，**z₀ = x** 为输入，**zₖ = y** 为输出。对于集合 **{z₀, z₁, ..., zₖ}** 中的每个元素，操作方 **O** 创建一个新的 **Lamport** 密钥对 **(sk<sub>z₀</sub>, pk<sub>z₀</sub>), (sk<sub>z₁</sub>, pk<sub>z₁</sub>), ..., (sk<sub>zₖ</sub>, pk<sub>zₖ</sub>)**。
 
 接下来，操作方创建了三个硬编码这些公钥的交易，分别为 **Assert**、**Disprove** 和 **Payout**，它们在下方的方程式 (1) 至 (3) 中定义，并在 **图2** 中展示。通过 **Covenants**（约束），我们限制了这些输出的花费方式，即只能通过这些特定的交易进行花费。正如在 **4.2** 节中所解释的，我们通过在设置阶段由签名者委员会预签 **Assert**、**Disprove** 和 **Payout** 来模拟 **Covenants**，并将这些交易分享给相关方，确保他们验证这些签名的有效性。
 
@@ -240,12 +240,7 @@ Lamport签名是一种安全的一次性签名。我们使用 $\( sk_M \)$ 和 $
 
 这种机制允许操作方提交其声称的正确计算结果，随后进入挑战期，其他用户可以质疑计算是否正确。这种方式将用于后文的构建中。
 
-```javascript
-Assert := (input = [(*)],
-					 witness = [(*, Covent, z0,...,zk, Cz0,...,czk)],
-					 output = [(dB, <DisproveScript1,...,DisproveScriptk,
-					 RealTimelock(∆A)^CheckCovenant^CheckSigpkO)])，
-```
+![](https://private-user-images.githubusercontent.com/8327633/378343954-67249774-4ce5-469e-90be-0f834f548cf4.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDA4ODcsIm5iZiI6MTcyOTUwMDU4NywicGF0aCI6Ii84MzI3NjMzLzM3ODM0Mzk1NC02NzI0OTc3NC00Y2U1LTQ2OWUtOTBiZS0wZjgzNGY1NDhjZjQucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg0OTQ3WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MGY0MzVmNzM4MzM2M2JhZDllNTE3YzIwM2I2OGZlNmQ3MmVkYzU1MjMxMzQ5ODQ1OWViMmI2NjkxNTk1ZTVjOSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.YSCNlOaGk9kPCSTEnNo7QPCjck8TdOO5Bq0yUOpAKcM)
 
 在 **Assert** 交易中，创建了一个包含 \( k + 1 \) 个 Tapleaves（Taproot 叶子）的 Taptree（Taproot 树），这些叶子定义了不同的花费条件，具体取决于执行路径是成功（称为 "Happy Path"）还是被质疑（称为 "Unhappy Path"）：
 
@@ -261,7 +256,7 @@ Assert := (input = [(*)],
    - 花费此类叶子需要：
      1. 满足 **Covenant**（契约）条件。
      2. 提供子程序  f<sub>i</sub> 的输入和输出公钥的正确承诺。
-     3. 证明  z_i $\neq$ f<sub>i</sub>(z<sub>i-1</sub>) ，即操作员提交了错误的中间状态 z<sub>i</sub> 对应于子程序 f<sub>i</sub> 。
+     3. 证明  z<sub>i</sub> $\neq$ f<sub>i</sub>(z<sub>i-1</sub>) ，即操作员提交了错误的中间状态 z<sub>i</sub> 对应于子程序 f<sub>i</sub> 。
 
 详细的争议处理逻辑在 **DisproveScript** 中呈现，描述了质疑操作员声明的具体步骤。
 
@@ -270,34 +265,26 @@ Assert := (input = [(*)],
 
 4. **(i) 支付路径（Payout）：**  如果在质疑期 $\Delta$<sub>A</sub> 结束后，没有人发布 **Disprove**（反驳）交易，操作员可以发布 **Payout** 交易并将资金转移给自己。具体定义如下：
 
-**Payout** := (*input* = [(**Assert**, 0, <**RealTimelock($\Delta$<sub>A</sub>)** ^ **TakeScript**>)],
-
-​		   witness = [(**Coventant**, σO)],
-
-​		    output = [(d_B, **CheckSig<sub>pko</sub>**)])
+![](https://private-user-images.githubusercontent.com/8327633/378344064-727deab4-4379-48f9-9824-1c62e1d01c25.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDA5MDUsIm5iZiI6MTcyOTUwMDYwNSwicGF0aCI6Ii84MzI3NjMzLzM3ODM0NDA2NC03MjdkZWFiNC00Mzc5LTQ4ZjktOTgyNC0xYzYyZTFkMDFjMjUucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1MDA1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NjE1NzdhNWZmODliNGMwMGI4MmY3ZTVlYjcxNDQ5N2ExODY4NGYwMzQzOTM2MzhlMzUzNmNkMjNkYmIyNTI1YiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.l5E6NqL-wvkOL0NVQ8du_QVHv_dz64yEjGgrXQngDXE)
 
 (ii) **反驳路径（Disprove）**：  
-使用操作员在 **Assert** 交易的见证中对 z<sub>0</sub>, $\dots$, z<sub>k</sub> \) 的承诺，任何人都可以反驳操作员对程序执行中间状态的错误声明，即如果某个 z<sub>i</sub> $\neq$ f<sub>i</sub>(z<sub>i-1</sub>)，其中 \( i $\in$ \{1, $\dots$, k\} \)，就可以通过发布 **Disprove** 交易来实现反驳，该交易将花费 **Assert** 交易的输出。具体定义如下：
+使用操作员在 **Assert** 交易的见证中对 z<sub>0</sub>, $\dots$, z<sub>k</sub> \) 的承诺，任何人都可以反驳操作员对程序执行中间状态的错误声明，即如果某个 z<sub>i</sub> $\neq$ f<sub>i</sub>(z<sub>i-1</sub>)，其中 i $\in$ {1, $\dots$, k}，就可以通过发布 **Disprove** 交易来实现反驳，该交易将花费 **Assert** 交易的输出。具体定义如下：
 
-**Disprove** := (*input* = [(**Assert**, 0, <DisproveScript<sub>i</sub>)],
-
-​			*witness* = [(Covenant, z<sub>i-1</sub>, z<sub>i</sub>, c<sub>zi-1</sub>, c<sub>zi</sub>)],
-
-​			*output* = [(b_B, **False**), (a_B, **True**)]),
+![](https://private-user-images.githubusercontent.com/8327633/378344168-0b231423-6951-4287-9be1-e9e295eeb0a8.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDA5MTksIm5iZiI6MTcyOTUwMDYxOSwicGF0aCI6Ii84MzI3NjMzLzM3ODM0NDE2OC0wYjIzMTQyMy02OTUxLTQyODctOWJlMS1lOWUyOTVlZWIwYTgucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1MDE5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MWQ0NDc2NDdjZDMzMGQ1NDM3MWQ3YWE0YzU3NzgyNjgxN2UwZWJiMzE0OGQ5NTBhNTllNmY3MjAyMDlhNDIwMyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.0NrooSnaIUdJf3uVQQDl-8qJQVvajsmQJEZMsl6Qzoc)
 
 该交易的输出决定操作员提供的押金 d_B 的处理方式。具体来说，**Disprove** 交易必须创建一个新的输出，用来烧毁部分押金 b_B ，其中 \( 0 $\leq$ b $\leq$ d \)。通过设置 **SIGHASH** 标志为 **SIGHASH SINGLE**，上述的输入和输出变为不可变。这允许任何用户发布 **Disprove** 交易，同时添加进一步的输出，比如他们可以领取剩余的 a_B 作为赏金或用来支付交易费用，其中 \( a = d - b \)。为了简化，上述定义中的 (a_B, True) 表示这个操作。这一机制为用户提供了发布此交易的激励，确实允许任何人执行该操作并领取相应的赏金。
 
 图 2 展示了比特币上的函数验证机制所涉及的交易。该机制主要包含以下关键交易：
 
-![](https://private-user-images.githubusercontent.com/8327633/377767179-7cc000f8-1ee5-4d23-a080-a8a7a9700a1a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzY5NTgsIm5iZiI6MTcyOTIzNjY1OCwicGF0aCI6Ii84MzI3NjMzLzM3Nzc2NzE3OS03Y2MwMDBmOC0xZWU1LTRkMjMtYTA4MC1hOGE3YTk3MDBhMWEucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDczMDU4WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9Y2RlYTVlOTNkMzkxMDQ1YTk0M2U3NjAyNzBmYzgyMzg3ZjcyODNmNWY1MjQ3Y2M4OWMxMGI3MTUzNjE0OTYwMiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.4GY9BgG3svSl6ig643PureKwAPn4Ma0gf57T6lp8EGk)
+![](https://private-user-images.githubusercontent.com/8327633/377767179-7cc000f8-1ee5-4d23-a080-a8a7a9700a1a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc2NzE3OS03Y2MwMDBmOC0xZWU1LTRkMjMtYTA4MC1hOGE3YTk3MDBhMWEucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NjJjNjAwODRjZTVjNzY3ZGU5NmUwNzIyZTZiY2M1NTJiMWViYjZkOTM3YTBmZDhiN2U5Mjk4NThkNWRjNmY1MCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.1bvHauhJ3KIxURFZtNjP6fuS0OpdDDd0Lq35dtnkFkU)
 
-图 2. Assert、Disprove 和 Payout 交易的示意图。Assert 交易的输入可以是任何 UTXO，用“*”表示，但我们要求花费脚本为 Covenant 并包含对 z<sub>0</sub>, z<sub>1</sub>, \dots$, z<sub>k</sub> 的承诺。为了增加可读性，我们引入了以下颜色编码：**灰色**圆角矩形表示交易。我们通过**绿色**矩形表示锁定在交易输出中的 BTC，通过**橙色**矩形表示交易输入花费的 BTC。**蓝色**箭头表示操作员采用的支出路径，**红色**箭头表示其他人采用的支出路径。在箭头上方，我们标注了花费箭头起点输出的条件。灰色虚线矩形围绕一些交易的输入和输出，表示在使用不同于 SIGHASH ALL 的 SIGHASH 标志时，将这些部分哈希并预签名。
+图 2. Assert、Disprove 和 Payout 交易的示意图。Assert 交易的输入可以是任何 UTXO，用“*”表示，但我们要求花费脚本为 Covenant 并包含对 z<sub>0</sub>, z<sub>1</sub>, $\dots$, z<sub>k</sub> 的承诺。为了增加可读性，我们引入了以下颜色编码：**灰色**圆角矩形表示交易。我们通过**绿色**矩形表示锁定在交易输出中的 BTC，通过**橙色**矩形表示交易输入花费的 BTC。**蓝色**箭头表示操作员采用的支出路径，**红色**箭头表示其他人采用的支出路径。在箭头上方，我们标注了花费箭头起点输出的条件。灰色虚线矩形围绕一些交易的输入和输出，表示在使用不同于 SIGHASH ALL 的 SIGHASH 标志时，将这些部分哈希并预签名。
 
-![](https://private-user-images.githubusercontent.com/8327633/377772373-546593ca-b68e-4b53-8f82-b346299e9360.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzc4MTYsIm5iZiI6MTcyOTIzNzUxNiwicGF0aCI6Ii84MzI3NjMzLzM3Nzc3MjM3My01NDY1OTNjYS1iNjhlLTRiNTMtOGY4Mi1iMzQ2Mjk5ZTkzNjAucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDc0NTE2WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9ZDVmMTczMjFiNzdhYzE5NjNmZWUwYzI5MjQyYWIxZTQzNTE5MzMwYjU5OWZjODI5ZTNiYjA1NmMxYmQxMThkNyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.4VFd2GLpvrsO8qYufHvME-l2fxxcOQ-7-dp2svNXrF0)
+![](https://private-user-images.githubusercontent.com/8327633/377772373-546593ca-b68e-4b53-8f82-b346299e9360.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc3MjM3My01NDY1OTNjYS1iNjhlLTRiNTMtOGY4Mi1iMzQ2Mjk5ZTkzNjAucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YzMxNzA3MzYxZDA2ZTcyODdlODhjYjg5YmY2NDM1ZTYzNjcyMmYwZDJmNjE1MDI5YjUyMDM5ZjljZDEwOWUyMCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.NnRiduPeqB5M8TlZO8XShybUbRJIr2gdTZEEvWEDMrs)
 
 ### 5.2 成本优化的乐观函数验证  
 
-在当前的设计中，**Assert** 和 **Disprove** 交易的规模都较大，导致发布到链上时的交易费用很高。我们通过扩展构建到乐观模型来解决这一问题，从而在诚实操作的情况下大幅减少链上开销。因此，最初操作员只需提交程序 f 的输入 x \，只有在被挑战者质疑时才必须公开输出和中间状态。为此，我们在**提交和挑战期**以及**支付期**引入了额外的交易。**设置**和**执行**部分保持不变。改进后的构建如图 3 所示。
+在当前的设计中，**Assert** 和 **Disprove** 交易的规模都较大，导致发布到链上时的交易费用很高。我们通过扩展构建到乐观模型来解决这一问题，从而在诚实操作的情况下大幅减少链上开销。因此，最初操作员只需提交程序 f 的输入 x ，只有在被挑战者质疑时才必须公开输出和中间状态。为此，我们在**提交和挑战期**以及**支付期**引入了额外的交易。**设置**和**执行**部分保持不变。改进后的构建如图 3 所示。
 
 1. **设置**。如果使用委员会来模拟 Covenant，则还需要创建并由签名委员会预先签署 **PayoutOptimistic** 交易。否则，该交易保持不变。
 
@@ -305,13 +292,11 @@ Assert := (input = [(*)],
 
 3. **提交和挑战期**。在提交程序 **f** 的执行时，操作员首先发布一笔 **Claim** 交易（在公式 (4) 中定义），表明对于某个预定义集合 **V** 中的 **y = z<sub>k</sub>**，他们知道某个 **x = z<sub>0</sub>**，使得 **f(x) = y**。操作员可以通过两种方式说服潜在的挑战者他们知道这样的 **x**：将其发布到链上或通过其他通信渠道（如使用第三方数据可用性层）发送给他们。
 
-![](https://private-user-images.githubusercontent.com/8327633/377779047-236cabdc-5a58-4a9b-bb7b-540e6c7eb6dc.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzg5NzUsIm5iZiI6MTcyOTIzODY3NSwicGF0aCI6Ii84MzI3NjMzLzM3Nzc3OTA0Ny0yMzZjYWJkYy01YTU4LTRhOWItYmI3Yi01NDBlNmM3ZWI2ZGMucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDgwNDM1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9ZTQ0Y2JiNDM1MmRmMjIwNTE0ZDg4ODBhMTdhZjEyM2Y1NTRkZmViZmU0MDE1Njk1NzVlM2JjZWNlMzQ5OTI3MSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.ItvDIaFnFyIP2jg3GHCoGvyW68wFXFUAmA7oO-pdju0)
-
-![](https://private-user-images.githubusercontent.com/8327633/377779047-236cabdc-5a58-4a9b-bb7b-540e6c7eb6dc.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzg5NzUsIm5iZiI6MTcyOTIzODY3NSwicGF0aCI6Ii84MzI3NjMzLzM3Nzc3OTA0Ny0yMzZjYWJkYy01YTU4LTRhOWItYmI3Yi01NDBlNmM3ZWI2ZGMucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDgwNDM1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9ZTQ0Y2JiNDM1MmRmMjIwNTE0ZDg4ODBhMTdhZjEyM2Y1NTRkZmViZmU0MDE1Njk1NzVlM2JjZWNlMzQ5OTI3MSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.ItvDIaFnFyIP2jg3GHCoGvyW68wFXFUAmA7oO-pdju0)
+![](https://private-user-images.githubusercontent.com/8327633/377779047-236cabdc-5a58-4a9b-bb7b-540e6c7eb6dc.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc3OTA0Ny0yMzZjYWJkYy01YTU4LTRhOWItYmI3Yi01NDBlNmM3ZWI2ZGMucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9Y2UxN2NkZTAzYWE1ZWExMjBkYjlmYzljY2E2MGQ0ZjNiZGZiZWY3N2Q0MzJlZjIzNmYyM2E4NjY2N2JiN2E1ZiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.xRVKqXKDxKFLNq9mjCD5WTLDq2uh9uGr-9BPmuyNZEQ)
 
 再次需要注意的是，如果 **x** 已通过链下共享，则可以从见证数据中省略 **x**。**AssertScript** 的定义如下：
 
-```css
+```
 AssertScript := CheckCovenant ^ CheckLampComm(pkz0) ^ ⋯ ^ CheckLampComm(pkzk);
 ```
 
@@ -319,11 +304,11 @@ AssertScript := CheckCovenant ^ CheckLampComm(pkz0) ^ ⋯ ^ CheckLampComm(pkzk);
 
 4. **(i) 支付路径（Payout）**。如果操作员的声明没有受到质疑，在 **∆B** 期过后，操作员可以发布 **PayoutOptimistic** 交易（在公式 (5) 中定义），以花费 **Claim** 交易的两个输出。通过这种方式，操作员从 **BitVM2** 中领取资金，并禁用争议逻辑。
 
-![](https://private-user-images.githubusercontent.com/8327633/377782487-71b74240-d55f-4aa5-a29a-2209d18713ec.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzk1NTMsIm5iZiI6MTcyOTIzOTI1MywicGF0aCI6Ii84MzI3NjMzLzM3Nzc4MjQ4Ny03MWI3NDI0MC1kNTVmLTRhYTUtYTI5YS0yMjA5ZDE4NzEzZWMucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDgxNDEzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NDRjZTM1YWM4MzA5YjQ2MWFmNjZjZTEwMTE0ZDdkMGNkNDVjYzViNTRiYjk1YTViZTg1YjBlNmRmNzRiNWY0MiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.MncH4Y3TBAt1TcqEYePmVgRZ1uRWKzGPe6aHjBryqVU)
+![](https://private-user-images.githubusercontent.com/8327633/377782487-71b74240-d55f-4aa5-a29a-2209d18713ec.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc4MjQ4Ny03MWI3NDI0MC1kNTVmLTRhYTUtYTI5YS0yMjA5ZDE4NzEzZWMucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NTk5ZTQyYTI4ZmZhZDA0MzdlZjYwM2EwYjkxY2IzZGRjOWE2ZDYxODIwMTdkZmRhNDhlMzNhMjhmYTdiMmQ2NiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.CFginoTY1w4eZhM87NY7Mb4a7LsqDgwVx1zEspkaCO8)
 
 (ii) **挑战与反驳（Challenge and Disprove）**。任何挑战者都可以通过发布 **Challenge** 交易（在公式 (6) 中定义）来质疑声明，该交易花费 **Claim** 交易的第二个（连接器）输出，并禁用 **PayoutOptimistic** 交易，迫使操作员进入争议阶段。此时，操作员只能通过 **Payout** 交易访问 **BitVM2** 资金 **dB**，而这需要发布 **Assert** 交易。如第 5.3 节所讨论的，如果操作员的声明有误，**Assert** 交易可以被反驳。
 
-![](https://private-user-images.githubusercontent.com/8327633/377783224-b7315b58-8847-4e22-9530-0aad685d9d8a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzk2ODMsIm5iZiI6MTcyOTIzOTM4MywicGF0aCI6Ii84MzI3NjMzLzM3Nzc4MzIyNC1iNzMxNWI1OC04ODQ3LTRlMjItOTUzMC0wYWFkNjg1ZDlkOGEucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDgxNjIzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9OWFjMGRiMTRkOGE3ODlmYWQ4ZDIwMGZmNmI0NWZjZDhiOGNkODE4ZTU0MGE4Y2RkMzkyOGNjOWJlN2Q5ZDdmMyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.W1j-LWSyIDMr6wOrKwh6Ll5hblg8iWKd27W6wCSg18A)
+![](https://private-user-images.githubusercontent.com/8327633/377783224-b7315b58-8847-4e22-9530-0aad685d9d8a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc4MzIyNC1iNzMxNWI1OC04ODQ3LTRlMjItOTUzMC0wYWFkNjg1ZDlkOGEucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MDEyMDhjZjg1Zjc3YWY0MmE5ZTE1YjE0NmJhMjdkMGY2ZjdlYzJkODBjNzBkYjZmYWFiY2VjZGEzNDg4MjQ2ZSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.q8-41ugBz1UWpGgmdeGo7hsBVLANHTY_Dirz95CCX1M)
 
 ### **5.3 BitVM2：基于比特币的 SNARG 验证器**
 
@@ -331,7 +316,7 @@ AssertScript := CheckCovenant ^ CheckLampComm(pkz0) ^ ⋯ ^ CheckLampComm(pkzk);
 
 在 [26] 中提供了一个用比特币脚本编写的 **Groth16** 验证器的示例实现，表明在比特币上验证 **SNARKs**（因此也包括较弱的 **SNARGs** 概念）是可行的。第 4 图展示了最终 **BitVM2** 协议的概述。
 
-![](https://private-user-images.githubusercontent.com/8327633/377784336-785e6550-5360-4422-b0e7-d2a178a8b307.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjkyMzk4NjYsIm5iZiI6MTcyOTIzOTU2NiwicGF0aCI6Ii84MzI3NjMzLzM3Nzc4NDMzNi03ODVlNjU1MC01MzYwLTQ0MjItYjBlNy1kMmExNzhhOGIzMDcucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMThUMDgxOTI2WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NmMxZWMwYWZhMTZkZWIxMTVjZGUxZmUyY2IxYWRlZWNlMjYwNjhkYWVlMGUxMGUxZGQ1MWQwYmQ2OWJhZjhlNyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.FQ6LM2ZzyyHhUQ_B6M6oEw4iARA_Csm2D4BKdGkYxKs)
+![](https://private-user-images.githubusercontent.com/8327633/377784336-785e6550-5360-4422-b0e7-d2a178a8b307.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjk1MDEyMDMsIm5iZiI6MTcyOTUwMDkwMywicGF0aCI6Ii84MzI3NjMzLzM3Nzc4NDMzNi03ODVlNjU1MC01MzYwLTQ0MjItYjBlNy1kMmExNzhhOGIzMDcucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMjFUMDg1NTAzWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MzEwMzYxMmU4ODJkZTIxYjU5ZTI3YTdjODA2MzkzY2U3MjNhNTJiZDRlOGUzNmU0OWVjYzJlZTkzZDkyOGUyNiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.YirXaP9yDeiyRmUa-d4Lmg6PY5oASo0S6lqc6_lUjas)
 
 ### **5.4 通过抵押保护免受恶意挑战者攻击**
 
@@ -361,7 +346,7 @@ BitVM2 的一个主要实际应用是用于在比特币（以及类似的区块�
 
 然而，当前这一理想功能无法直接在比特币脚本中实现，原因之一是当 PegIn 交易发生时，执行 PegOut 的用户（即 Bob）还不确定，因此无法强制将 PegIn 交易与 PegOutideal 交易之间建立可执行的关联。
 
-### **6.1   稻草人桥接协议
+### 6.1   稻草人桥接协议
 
 在本节中，我们概述了一个 BitVM2 桥的初步设计，它通过乐观的 SNARG 验证器来模拟理想的 PegOut 功能（PegOutideal）。在这里，我们假设侧链系统作为一个 rollup 运行，并依赖比特币进行共识。具体来说，侧链系统使用发布到比特币区块链的数据承诺来确定交易顺序，并结合状态转换验证的方法。这一设计通过只专注于验证包含在比特币区块链中的交易来简化验证过程。因此，BitVM2 只需要实现一个比特币轻客户端，而不需要同时实现侧链系统和比特币轻客户端。
 
