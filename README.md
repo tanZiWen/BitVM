@@ -12,3 +12,5 @@
 [锁定脚本和解锁脚本](https://github.com/tanZiWen/BitVM/blob/master/%E9%94%81%E5%AE%9A%E8%84%9A%E6%9C%AC%E5%92%8C%E8%A7%A3%E9%94%81%E8%84%9A%E6%9C%AC.md)
 
 [SIGHASH标志位](https://github.com/tanZiWen/BitVM/blob/master/SIGHASH%E6%A0%87%E5%BF%97.md)
+
+[Taproot树](https://github.com/tanZiWen/BitVM/blob/master/Taproot.md)
