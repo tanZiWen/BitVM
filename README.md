@@ -14,3 +14,5 @@
 [SIGHASH标志位](https://github.com/tanZiWen/BitVM/blob/master/SIGHASH%E6%A0%87%E5%BF%97.md)
 
 [Taproot树](https://github.com/tanZiWen/BitVM/blob/master/Taproot.md)
+
+[Hash运算](https://github.com/tanZiWen/BitVM/blob/master/Hash%E8%BF%90%E7%AE%97.md)
