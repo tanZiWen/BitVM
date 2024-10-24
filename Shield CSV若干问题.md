@@ -85,3 +85,134 @@ Bob 验证了所有步骤后，接受了 2 个币，这些币现在属于他的�
   
 ### 总结
 Bob 无法直接访问 Alice 的旧账户状态，但通过验证 Alice 提供的 **交易证明（coin proof）** 和 **nullifier**，Bob 可以间接确认 Alice 的旧账户状态是否被正确更新，并确保交易的合法性。这种机制通过零知识证明保护用户隐私，同时保证交易的安全性和准确性。
+
+## 3. Shielded CSV中交易转账示例
+为了更好地理解 **Shielded CSV** 中的用户之间转账过程，我将通过一个详细的例子逐步介绍整个交易过程。假设我们有两个用户 **Alice** 和 **Bob**，Alice 想要向 Bob 转账 10 个单位的某种加密资产。
+
+### 背景设置
+
+1. **Alice的初始账户状态**:
+   - **账户ID**: `AccountID_Alice`
+   - **账户余额**: 50 个单位
+   - **账户公钥**: `PublicKey_Alice`
+   - **已花费累加器（Spent Accumulator）**: 包含 Alice 之前花费的交易记录
+   - **nullifier 累加器**: 包含所有与 Alice 账户相关的历史 nullifier
+
+2. **Bob的初始账户状态**:
+   - **账户ID**: `AccountID_Bob`
+   - **账户余额**: 20 个单位
+   - **账户公钥**: `PublicKey_Bob`
+
+现在，Alice 打算将 10 个单位的资产转给 Bob。整个过程通过 **Shielded CSV** 协议进行，具有隐私性和安全性。
+
+---
+
+### 1. Alice 创建交易
+
+Alice 需要创建一笔转账交易，交易的目标是将 10 个单位的资产从她的账户转移到 Bob 的账户。此时，她会按照以下步骤操作：
+
+#### 交易的组成部分：
+
+1. **条件 nullifier accumulator 值 (Conditional Nullifier Accumulator Value)**：
+   - 这将包含所有相关的 nullifier 的累加器状态，确保交易在发生区块链重组时不会失效。例如：
+     ```text
+     NullifierAccumulator = "Accumulated_Nullifiers_UpTo_TxN"
+     ```
+
+2. **要被 nullify 的账户状态精华 (AcctStateEssence to Nullify)**：
+   - Alice 将标记她的账户状态为 "已作废"，因为这笔转账会更新她的账户余额。Alice 的账户状态精华如下：
+     ```text
+     AcctStateEssence_Alice = {
+         AccountID: "AccountID_Alice",
+         Balance: 50,  // 转账前的余额
+         PublicKey: "PublicKey_Alice"  // 用于签名和验证的公钥
+     }
+     ```
+
+3. **要花费的 CoinIDs 列表 (List of CoinIDs to Spend)**：
+   - Alice 使用自己账户中的 Coin 来支付。Coin 是通过前一笔交易生成的。假设 Alice 有两个 Coin，分别是：
+     ```text
+     CoinID1 = { TxHash: "Tx123", Index: 0 }
+     CoinID2 = { TxHash: "Tx124", Index: 1 }
+     ```
+
+4. **要创建的账户状态精华 (AcctStateEssence to Create)**：
+   - 由于 Alice 的账户余额会减少到 40 个单位（因为她转账了 10 个单位给 Bob），新的账户状态精华如下：
+     ```text
+     AcctStateEssence_Alice_New = {
+         AccountID: "AccountID_Alice",
+         Balance: 40,
+         PublicKey: "PublicKey_Alice"
+     }
+     ```
+
+5. **要创建的 Coin 精华 (List of CoinEssences to Create)**：
+   - 对于 Bob 来说，Alice 会为他创建一个新的 Coin。该 Coin 精华包含：
+     ```text
+     CoinEssence_Bob = {
+         OwnerAddress: "AccountID_Bob",  // Bob 的账户地址
+         Amount: 10,  // 转账金额
+         Index: 0  // 新的 Coin 在交易中的索引位置
+     }
+     ```
+
+---
+
+### 2. 转账验证（链下处理）
+
+1. **Alice 生成 ZKP 证明**：
+   - 在链下，Alice 会生成一个 **零知识证明（ZKP）**，以证明她的账户余额是有效的，并且这笔转账是合法的。她需要证明以下内容：
+     - Alice 的账户确实持有 50 个单位的资产。
+     - Alice 要转账的 10 个单位是合法的，并且她还剩下 40 个单位的资产。
+     - Bob 将收到 10 个单位，且新的 Coin 属于 Bob。
+
+2. **Bob 验证转账**：
+   - 在链下，Bob 收到 Alice 提供的交易和 ZKP 证明。Bob 使用 **PCDVerify** 验证该交易的合法性，确保：
+     - Alice 的账户状态已更新并且合法。
+     - Alice 的 Coin 证明有效。
+     - Bob 将合法地获得新的 Coin。
+
+---
+
+### 3. 链上发布 nullifier（链上处理）
+
+一旦交易和 ZKP 证明在链下通过验证，Alice 会将 **nullifier** 发布到区块链上。这个 nullifier 是 Alice 标记她账户状态无效的证明，表示该账户状态已经被 nullify（作废）。
+
+在链上发布时：
+
+1. **AggregateNullifier**：
+   - Alice 创建的 nullifier 会被添加到区块链的 nullifier 累加器中。这个累加器确保 Alice 的账户状态不能重复使用，也就是防止双重支付。
+   - 例如：
+     ```text
+     AggregateNullifier = {
+         SchnorrKeys: ["PublicKey_Alice"],
+         Signature: "Signature_Alice",
+         Address: "Alice's_Address_For_Fees"
+     }
+     ```
+
+---
+
+### 4. Bob 接收 Coin
+
+当 nullifier 被成功发布到区块链后：
+
+1. **Bob 更新账户状态**：
+   - Bob 能够确认他已收到来自 Alice 的 10 个单位的 Coin，并且可以使用新的账户状态来进行下一笔交易。
+   - Bob 的账户状态会更新为：
+     ```text
+     AcctState_Bob = {
+         AccountID: "AccountID_Bob",
+         Balance: 30,  // 原有的 20 + 收到的 10
+         PublicKey: "PublicKey_Bob"
+     }
+     ```
+
+2. **Coin 创建**：
+   - Bob 的账户中将会记录这笔转账中生成的新 Coin，表示他从 Alice 那里收到了 10 个单位的资产。
+
+---
+
+### 总结
+
+在 **Shielded CSV** 中的转账流程涉及链下和链上的交互。链下生成 ZKP 证明并进行验证，确保隐私和合法性。链上只需要发布 **nullifier**，记录账户状态的作废和交易的发生，保障链上数据的安全和不重复使用。整个过程确保了用户之间的转账隐私，同时保证了交易的合法性。
