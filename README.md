@@ -15,4 +15,4 @@
 
 [Taproot树](https://github.com/tanZiWen/BitVM/blob/master/Taproot.md)
 
-[Hash运算](https://github.com/tanZiWen/BitVM/blob/master/Hash%E8%BF%90%E7%AE%97.md)
+[比特币中支持的Hash运算种类](https://github.com/tanZiWen/BitVM/blob/master/Hash%E8%BF%90%E7%AE%97.md)
