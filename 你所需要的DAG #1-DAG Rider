@@ -1,7 +1,0 @@
-## DAG Rider
-
-这是即将推出的系列文章中的第一篇，旨在解释 Aptos Labs 开发的基于 DAG 的共识算法。从第一篇开始——DAG Rider，它由 Idit Keidar、Eleftherios Kokoris-Kogias、Oded Naor 和 Alexander Spiegelman 于 2021 年提出。
-
-DAG Rider 基于拜占庭原子广播问题，使用异步通信模型。它受到当时最新的异步协议 VABA 和 DUMBO 的启发，这些协议展示了以下特性：最优的容错能力、期望线性时间复杂度，以及最优的摊销线性通信复杂度（对于 Dumbo 来说，这是通过批处理技术将 VABA 的二次通信复杂度转化为线性通信复杂度实现的，而这种方法我们也将在 DAG Rider 中看到）。
-
-在深入探讨协议的设计和运行机制之前，让我们先讨论一下其结构的一些关键特性：
