@@ -169,3 +169,25 @@ Bullshark 遵循这样的趋势：一旦节点接收到至少 2f + 1 条消息�
 
 由于基础的可靠广播机制保证了所有节点对领导者的因果历史达成一致，节点在同意排序某些领导者后，也会一致同意垃圾回收哪些轮次。
 
+![](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*F-OpgAnVgfhoMGeDYgG5Bg.png)
+
+![](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*KoZxxzq7niBtKMwu0Dai7g.png)
+
+### 总结
+
+本文探讨了 **Bullshark** 的架构，它在基础层面上成为第一个基于 DAG 的零开销 BFT 协议，同时结合了部分同步协议和异步协议的优势。以下是 Bullshark 的核心特点和优点：
+
+1. **继承 DAG-Rider 的优点：**  
+   Bullshark 保留了 DAG-Rider 的所有理想特性，包括：  
+   - **最优的摊销复杂度**：高效的资源利用。  
+   - **异步活性（Asynchronous Liveness）**：在异步条件下仍能保证系统的进展性。  
+   - **抗量子安全性（Post-Quantum Security）**：在面对量子计算威胁时仍能保持安全性。
+
+2. **快速路径（Fast Path）：**  
+   Bullshark 在同步条件下提供快速路径，显著降低延迟，保证高效的交易确认速度。
+
+3. **灵活的投票机制：**  
+   - 节点在每个波次中，如果未成功提交领导者，会切换投票类型到备用模式（Fallback）。  
+   - 这种机制无需任何视图变更（View-Change）或视图同步（View-Synchronization）机制，因为所有必要的信息已经编码在 DAG 中。
+
+通过结合异步协议的弹性和部分同步协议的快速路径，Bullshark 在性能和鲁棒性之间实现了卓越的平衡。它为分布式系统和区块链应用提供了一个高效且安全的解决方案，同时展示了 DAG 技术在共识协议中的巨大潜力。
