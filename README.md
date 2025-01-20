@@ -23,7 +23,7 @@
 
 [Narwhal&Task](https://github.com/tanZiWen/BitVM/blob/master/%E4%BD%A0%E6%89%80%E9%9C%80%E8%A6%81%E7%9A%84DAG%20%232%20-%20Narwhal%20%26%20Tusk.md)
 
-[Bullshark]()
+[Bullshark](https://github.com/tanZiWen/BitVM/blob/master/%E4%BD%A0%E6%89%80%E9%9C%80%E8%A6%81%E7%9A%84DAG%233-BullShark.md)
 
 [Mysticeti]()
 
