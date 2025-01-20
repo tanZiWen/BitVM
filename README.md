@@ -19,8 +19,12 @@
 
 
 ## DAG共识算法
-[DAG-Rider]()
+[DAG-Rider](https://github.com/tanZiWen/BitVM/blob/master/%E4%BD%A0%E6%89%80%E9%9C%80%E8%A6%81%E7%9A%84DAG%20%231-DAG%20Rider.md)
+
 [Narwhal&Task]()
+
 [Bullshark]()
+
 [Mysticeti]()
+
 [Mahi]()
