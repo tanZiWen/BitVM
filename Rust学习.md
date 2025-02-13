@@ -1,4 +1,5 @@
-1. 闭包中FnOnce、FnMut、Fn 这3者的区别？
+## 1. 闭包中FnOnce、FnMut、Fn 这3者的区别？
+   
 `FnOnce`、`FnMut` 和 `Fn` 都是 Rust 中用于表示不同类型的 **闭包** 和 **函数指针** 的特征（traits）。它们的区别主要体现在闭包如何与环境中的变量交互（即闭包捕获变量的方式）以及如何调用这些闭包时能否修改其环境。
 
 ### 1. **`FnOnce`**
@@ -121,3 +122,88 @@ fn main() {
   ```
 
 每种闭包类型的选择取决于你对环境变量的需求：是否需要修改它们，是否需要多次调用闭包等。
+
+## 2. Copy和Clone的区别是什么？
+
+### **示例 1：`Copy` 适用于简单值类型**
+```rust
+#[derive(Debug, Copy, Clone)] // `Copy` 需要 `Clone` 作为前提
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p1 = Point { x: 1, y: 2 };
+    let p2 = p1; // 这里是直接复制，不会导致 p1 无效
+    println!("{:?}", p1); // `p1` 仍然可用，因为 `Point` 实现了 `Copy`
+    println!("{:?}", p2);
+}
+```
+#### **解释**
+- `Point` 结构体只包含基本数据类型 (`i32`)，所以它可以 `Copy`。
+- 赋值 `p2 = p1` **不会移动所有权**，而是直接 **复制值**。
+- `Copy` 使得 `p1` 仍然可用，不会发生“所有权丢失”错误。
+
+---
+
+### **示例 2：`Clone` 适用于堆分配类型**
+```rust
+#[derive(Debug, Clone)] // 只实现 `Clone`，没有 `Copy`
+struct Data {
+    name: String,
+}
+
+fn main() {
+    let d1 = Data { name: String::from("Hello") };
+    let d2 = d1.clone(); // 这里调用 `clone`，创建一个新的堆分配字符串
+    println!("{:?}", d1); // `d1` 仍然可用
+    println!("{:?}", d2);
+}
+```
+#### **解释**
+- `Data` 结构体内部包含 **`String`（堆分配的类型）**，所以 **不能 `Copy`**，因为直接按位复制 `String` 可能会导致 **多个变量指向同一块内存**，最终导致 **二次释放**（double free）错误。
+- 但它可以 **`Clone`**，这样 `d1.clone()` 就会 **重新分配内存**，创建一个 **独立的副本**。
+
+---
+
+### **示例 3：`Copy` vs `Clone` 直接对比**
+```rust
+#[derive(Debug, Copy, Clone)]
+struct CopyType(i32);
+
+#[derive(Debug, Clone)]
+struct CloneType(String);
+
+fn main() {
+    let a = CopyType(42);
+    let b = a; // 直接复制，不影响 `a`
+    println!("{:?}", a); // ✅ `a` 仍然可用
+
+    let x = CloneType(String::from("Hello"));
+    let y = x.clone(); // 显式调用 `clone`
+    println!("{:?}", x); // ✅ `x` 仍然可用
+}
+```
+#### **关键区别**
+| 特性 | `CopyType` (`Copy`) | `CloneType` (`Clone`) |
+|------|----------------------|----------------------|
+| **是否自动复制** | ✅ 是 | ❌ 否，需 `clone()` |
+| **是否需要 `Clone`** | ✅ 需要 | ✅ 需要 |
+| **适用类型** | 基础类型 (`i32`, `bool`) | 复杂类型 (`String`, `Vec<T>`) |
+| **是否涉及堆分配** | ❌ 否 | ✅ 是 |
+
+---
+
+### **总结**
+- **使用 `Copy`**
+  - 适用于**小型、简单值类型**（如 `i32`、`bool`）。
+  - 赋值时自动复制，不需要 `clone()`。
+  - **不能** 用于包含 `String`、`Vec<T>` 等堆分配类型的结构体。
+
+- **使用 `Clone`**
+  - 适用于**需要深拷贝**的类型（如 `String`、`Vec<T>`）。
+  - 需要手动调用 `.clone()` 创建副本。
+  - **适用于** 复杂的自定义复制逻辑（如递归复制）。
+
+`Copy` 适合轻量级数据，而 `Clone` 则提供更大的灵活性，你可以根据需求选择合适的方式！ 🚀
