@@ -7,4 +7,4 @@
 6. 同步网路是指消息在规定的时间内可以达到，异步网路没有时间的限制，异步网路都是通过随机数选择一个Leader
 7. Narwhal&Tusk优化了DAG-Rider的可靠广播，DAG-Rider广播的是完整区块，Narwhal&Tusk是广播区块头信息，交易可以异步的拉去或广播
 8. Bullshark分为同步版本和异步版本，同步版本基于同步网路假设，两个round一轮，异步版本基于异步网路和DAG-rider一样
-9. 
+9. Mysticeti 基于半同步网路
