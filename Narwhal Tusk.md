@@ -1,4 +1,4 @@
-Narwhal 和 Tusk 是基于有向无环图（DAG）的内存池（mempool）与高效拜占庭容错（BFT）共识算法，旨在提升区块链系统的事务处理性能。以下是对 Narwhal 和 Tusk 共识算法的简要概述：
+Narwhal 和 Tusk 是基于有向无环图（DAG）的内存池（mempool）共识算法，旨在提升区块链系统的事务处理性能。以下是对 Narwhal 和 Tusk 共识算法的简要概述：
 ### Narwhal 内存池协议
 核心思想：Narwhal 将事务（transaction）的可靠传播与事务排序分开，以实现高性能的 DAG 共识。事务传播由 Narwhal 内存池负责，而排序则交给共识协议。
 设计特点：
