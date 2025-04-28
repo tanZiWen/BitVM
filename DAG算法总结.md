@@ -12,4 +12,8 @@
 11. 异步网路假设：DAG-RIDER, TUSK, BullShark, Mahi 半同步：BullShark，Mysticeti
 12. 代码实现：TUSK, BullShark, Mysiceti 主网
 13. TPS： Narwhal-HotStuff：30000-70000 tx/sec，延迟约 1-2 秒，Tusk：100,000-160,000 tx/sec，延迟约 3-4 秒，Bullshark约 100,000-130,000 tx/sec 的吞吐量，延迟为 2-3 秒，Shoal 0.5–1秒 100,000–160,000 TPS，Mysticeti 300,000-400000 tx/sec 延迟0.4s
-14. 
+14. hoststuff 在 4–10 个节点的测试环境中，HotStuff 的吞吐量可接近 20,000 TPS（简单交易，带宽充足）, 1s
+
+
+
+
