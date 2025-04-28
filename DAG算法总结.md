@@ -8,8 +8,8 @@
 7. Narwhal&Tusk优化了DAG-Rider的可靠广播，DAG-Rider广播的是完整区块，Narwhal&Tusk是广播区块头信息，交易可以异步的拉去或广播
 8. Bullshark分为同步版本和异步版本，同步版本基于同步网路假设，两个round一轮，异步版本基于异步网路和DAG-rider一样
 9. Mysticeti 基于半同步网路，
-10. 延迟： DAG-RDIER 10+, Tusk 3~4s, BullShark 2~3s, hotstuff 1~2s Mysticeti 0.4s 
+10. 延迟： DAG-RDIER 10+, Tusk 3-4s, BullShark 2-3s, hotstuff 1-2s Mysticeti 0.4s 
 11. 异步网路假设：DAG-RIDER, TUSK, Maha, BullShark 半同步：BullShark，Mysticeti
 12. 代码实现：TUSK, BullShark, Mysiceti 主网
-13. TPS： Narwhal-HotStuff：30000~70000 tx/sec，延迟约 1~2 秒，Tusk：100,000-160,000 tx/sec，延迟约 3-4 秒，Bullshark约 100,000-130,000 tx/sec 的吞吐量，延迟为 2-3 秒，Mysticeti 300,000 ~ 400000 tx/sec 延迟0.4s
+13. TPS： Narwhal-HotStuff：30000-70000 tx/sec，延迟约 1-2 秒，Tusk：100,000-160,000 tx/sec，延迟约 3-4 秒，Bullshark约 100,000-130,000 tx/sec 的吞吐量，延迟为 2-3 秒，Mysticeti 300,000-400000 tx/sec 延迟0.4s
 14. 
