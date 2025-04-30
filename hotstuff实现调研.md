@@ -6,7 +6,7 @@
 ### diem项目方，原Libra团队，facebook
 1. github: https://github.com/hot-stuff/libhotstuff rust实现
 2. 论文：https://arxiv.org/pdf/2106.10362 作者：Jolteon and Ditto
-3. 问题：diem项目方已经停止运营，代码停留在22年，不是hoststuff原版，是基于hotstuff的改进版
+3. 问题：diem项目方已经停止运营，代码停留在20年，不是hoststuff原版，是基于hotstuff的改进版
 4. 好处：相对简单便于理解
 ### aptos项目方
 1. https://github.com/aptos-labs/aptos-core/tree/main/consensus rust实现
