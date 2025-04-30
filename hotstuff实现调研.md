@@ -10,6 +10,6 @@
 4. 好处：相对简单便于理解
 ### aptos项目方
 1. https://github.com/aptos-labs/aptos-core/tree/main/consensus rust实现
-2. 论文：Jolteon作者加入Aptos基于diem论文的改进
+2. 论文：Jolteon作者加入Aptos基于diem论文的改进，https://medium.a41.io/aptos-series-2-aptosbft-consensus-algorithm-for-scalability-and-security-9c6adffc76b3
 3. 问题：和Apots项目本身有一些特性的耦合
 4. 好处：实际线上运行，可行性进过论证
