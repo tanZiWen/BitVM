@@ -67,5 +67,60 @@ Pacemaker 的主要职责包括：
 - 状态同步：确保所有节点在视图切换时同步最高仲裁证书（Quorum Certificate, QC），避免分叉或状态不一致。
 - 活性保证：即使存在最多 ( f ) 个故障节点（包括拜占庭节点），Pacemaker 也能通过视图切换推动系统进展。
 
+#### Prepare 到 PreCommit 的关联机制
+Prepare 阶段和 PreCommit 阶段通过以下步骤关联：
+- Prepare 阶段输出
+   - Prepare QC：Prepare 阶段结束时，领导者收集至少 n−f个 Prepare 投票，形成 Prepare QC：
+```python
+prepare_qc = QuorumCertificate(
+    view = current_view,
+    block_hash = block.hash,
+    phase = "Prepare",
+    signatures = [vote.signature for vote in votes]
+)
+```
+- 广播：领导者将 Prepare QC 广播给所有节点
+
+**PreCommit 阶段输入**
+- 接收 Prepare QC：每个节点接收 Prepare QC，作为 PreCommit 阶段的触发条件。
+-节点验证 Prepare QC：
+   - 视图编号是否匹配 current_view。
+   - QC 包含至少 n−f个有效签名。
+   - 关联区块 ( B )（通过 prepare_qc.block_hash）存在于本地区块树。
+  ```python
+  verify_qc(qc):
+    return (qc.view == self.current_view and
+            len(qc.signatures) >= (self.n - self.f) and
+            all(verify_signature(sig, qc.block_hash) for sig in qc.signatures) and
+            self.block_tree.contains(qc.block_hash)) ```
+
+**PreCommit 阶段投票**
+- 生成 PreCommit 投票：
+ - 若 Prepare QC 验证通过，节点为同一区块 ( B ) 生成 PreCommit 投票：
+```python
+vote = Vote(
+    voter_id = self.id,
+    view = self.current_view,
+    block_hash = prepare_qc.block_hash,
+    phase = "PreCommit",
+    signature = sign(prepare_qc.block_hash, self.private_key)
+)
+```
+
+- 节点更新 locked_qc，记录 Prepare QC 作为锁定点：
+```python
+self.locked_qc = max(self.locked_qc, prepare_qc, key=lambda qc: qc.view)
+```
+- 锁定确保后续提案不会与 ( B ) 冲突，除非基于更高视图的 QC。
+- 领导者收集 PreCommit 投票
+   - 领导者收集至少 n−f个 PreCommit 投票，形成 PreCommit QC：
+```python
+precommit_qc = QuorumCertificate(
+    view = current_view,
+    block_hash = block.hash,
+    phase = "PreCommit",
+    signatures = [vote.signature for vote in votes]
+) 
+```
 
 
