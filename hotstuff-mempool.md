@@ -43,4 +43,5 @@
       - QuorumWaiter → Processor：通过通道发送确认消息。
       - Processor → 共识模块：发送批次完成消息。
 - mempool消息处理
+  - 目的：1.处理其他节点发来的Batch交易； 2. 处理其他节点发送的Batch请求
   
