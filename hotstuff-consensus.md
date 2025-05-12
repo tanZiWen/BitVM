@@ -87,4 +87,13 @@
     - 验证TC信息的合法性
     - 升级本地的round
     - 如果是leader节点开启新的round
+ 
+#### 问题：
+1. 既然所有节点都会收到 Timeout 并通过 handle_timeout 生成 TC 和推进轮次，为什么还需要 handle_tc 来再次处理广播的 TC 和调用 advance_round？是否可以省略 handle_tc，让 handle_timeout 完成所有超时相关的逻辑？
+ - 在 handle_timeout 中，某个节点可能收到 2/3 以上 Timeout 消息，生成 TC 并推进轮次（advance_round）。但其他节点可能因为网络延迟，尚未收到足够 Timeout 消息，未能生成 TC，仍在旧轮次。
+ - handle_tc 处理广播的 TC，确保 所有节点（包括那些没生成 TC 的节点）同步到新轮次（advance_round(tc.round)）。TC 是 2/3 以上节点的共识证明，广播后通过 handle_tc 让落后节点“赶上”正确轮次。
+
+
+3. 
+
 
