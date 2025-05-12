@@ -92,8 +92,10 @@
 1. 既然所有节点都会收到 Timeout 并通过 handle_timeout 生成 TC 和推进轮次，为什么还需要 handle_tc 来再次处理广播的 TC 和调用 advance_round？是否可以省略 handle_tc，让 handle_timeout 完成所有超时相关的逻辑？
  - 在 handle_timeout 中，某个节点可能收到 2/3 以上 Timeout 消息，生成 TC 并推进轮次（advance_round）。但其他节点可能因为网络延迟，尚未收到足够 Timeout 消息，未能生成 TC，仍在旧轮次。
  - handle_tc 处理广播的 TC，确保 所有节点（包括那些没生成 TC 的节点）同步到新轮次（advance_round(tc.round)）。TC 是 2/3 以上节点的共识证明，广播后通过 handle_tc 让落后节点“赶上”正确轮次。
-
-
+2. 如果我（某个节点）先生成了 TC 并广播给其他人，我的轮次（round）已经加1（advance_round），而其他节点也生成了 TC 并广播给我，会不会导致 handle_tc 再次执行，重复推进轮次或触发不必要的操作？
+ - handle_tc 中包含了 tc.round < self.round return 的逻辑，我的round如果已经被推进了，那其他人广播给我的round就低，不会继续推进round
 3. 
+
+
 
 
