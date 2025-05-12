@@ -95,6 +95,8 @@
 2. 如果我（某个节点）先生成了 TC 并广播给其他人，我的轮次（round）已经加1（advance_round），而其他节点也生成了 TC 并广播给我，会不会导致 handle_tc 再次执行，重复推进轮次或触发不必要的操作？
  - handle_tc 中包含了 tc.round < self.round return 的逻辑，我的round如果已经被推进了，那其他人广播给我的round就低，不会继续推进round
 3. QC代表父区块共识成功；TC代表父区块共识失败。
+4. 在process_block中使用cleanup_proposer的目的是什么？
+ - b0,b1,block都能在本地拿到，为什么还需要去调用Cleanup清除buffer中的缓存，区块的构建只有leader调用的drain清除了buffer中的缓存，而非leader节点并没有清除buffer中的缓存，区块已经存储在本地，所有节点应该删除缓存数据以免区块构建冲突。
 
 
 
