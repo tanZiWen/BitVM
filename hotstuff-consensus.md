@@ -84,7 +84,7 @@
     - 向其他节点发送TC信息
     - 如果是Leader节点开启新的round
   - 处理TC消息
-  - 验证TC信息的合法性
-  - 升级本地的round
-  - 如果是leader节点开启新的round
+    - 验证TC信息的合法性
+    - 升级本地的round
+    - 如果是leader节点开启新的round
 
