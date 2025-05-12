@@ -42,3 +42,32 @@
 #### Mempool
 - 功能： 和mempool功能相关，从其他节点获取缺失的区块，等待结果并清除拿到结果的线程，反馈给共识拿到的结果
 #### Core
+- 功能：构建proposal，发送给其他节点投票签名生成QC，处理超时的消息，并生成TC。
+- 流程：
+  - 构建proposal消息
+    - leader节点才能构造
+    - propose模块处理，接收到ProposerMessage::Make消息
+    - 构建区块，从buffer中拿到所有打包好的digest，向其他节点发送ConsensusMessage::Propose消息，并等待返回
+    - 需要接收到2/3的共识节点消息
+  - 处理proposal消息
+    - 其他节点接收到Propose消息，开始处理proposal消息
+    - 验证propose消息是不是leader节点发出
+    - 验证区块合法性，签名验证
+    - 处理QC消息
+    - 处理TC消息
+    - 验证本地是否包含所有的交易信息，和Mempool模块关联，如果不包含则向leader节点拿。
+    - 进一步处理区块信息
+  - 处理区块信息
+  - 或者父区块和爷爷区块，判断是否满足 b0 <- |qc0; b1| <- |qc1; block|条件，如果没有从leader节点获取，
+  - 存储区块到本地
+  - 从buffer清除b0,b1,block的digest信息
+  - 如果满足 b0.round + 1 == b1.round，则可以提交b0，清除所有小于b0的区块同步请求
+    - 如果last_committed_round大于block.round，直接返回，该区块已经提交过，不能重复提交
+    - 如果last_committed_round+1<block.round, 证明本地缺少历史区块，从其他节点获取所有历史区块
+    - tx_commit处理缺失？？
+  - 确保block.round = self.round，恶意领导者可能故意生成带有不正确轮次（如非常大的未来轮次）的区块，试图干扰系统的正常运行。
+  - 对区块进行投票
+    - block.round > self.last_voted_round，需要满足当前区块的round大于最后投票的round，防止节点为旧轮次的区块投票（避免重复投票或回退）。
+    - block.qc.round + 1 == block.round，当前区块的qc的round+1等于当前区块的round，这确保区块是在正确的轮次顺序上提议的，防止跳跃或伪造轮次。或者，tc.round + 1 == block.round，确认新提案接在超时之后，并且 block.qc.round >= *tc.high_qc_rounds().iter().max().expect("Empty TC"); 不能引用一个太老的QC，是超时TC里面记录的最大的QC，防止引用老的QC导致分叉。
+  - 
+
