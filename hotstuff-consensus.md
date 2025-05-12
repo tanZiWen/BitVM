@@ -94,7 +94,7 @@
  - handle_tc 处理广播的 TC，确保 所有节点（包括那些没生成 TC 的节点）同步到新轮次（advance_round(tc.round)）。TC 是 2/3 以上节点的共识证明，广播后通过 handle_tc 让落后节点“赶上”正确轮次。
 2. 如果我（某个节点）先生成了 TC 并广播给其他人，我的轮次（round）已经加1（advance_round），而其他节点也生成了 TC 并广播给我，会不会导致 handle_tc 再次执行，重复推进轮次或触发不必要的操作？
  - handle_tc 中包含了 tc.round < self.round return 的逻辑，我的round如果已经被推进了，那其他人广播给我的round就低，不会继续推进round
-3. 
+3. QC代表父区块共识成功；TC代表父区块共识失败。
 
 
 
