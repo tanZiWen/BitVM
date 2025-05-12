@@ -69,14 +69,22 @@
     - 对区块进行投票
       - block.round > self.last_voted_round，需要满足当前区块的round大于最后投票的round，防止节点为旧轮次的区块投票（避免重复投票或回退）。
       - block.qc.round + 1 == block.round，当前区块的qc的round+1等于当前区块的round，这确保区块是在正确的轮次顺序上提议的，防止跳跃或伪造轮次。或者，tc.round + 1 == block.round，确认新提案接在超时之后，并且 block.qc.round >= *tc.high_qc_rounds().iter().max().expect("Empty TC"); 不能引用一个太老的QC，是超时TC里面记录的最大的QC，防止引用老的QC导致分叉。
-    - 投票完成后
-      - 获取下一轮的leader，如果是leader节点
-        - 如果投票的round小于本地round直接返回
-        - 验证投票的合法性
-        - 聚合投票
-        - 升级本地的QC
-        - 生成新的proposal
-      - 如果不是leader节点，向其他节点发送ConsensusMessage::Vote消息
-    - 
-  - 
+  - 处理投票消息
+    - 获取下一轮的leader，如果是leader节点
+      - 如果投票的round小于本地round直接返回
+      - 验证投票的合法性
+      - 聚合投票
+      - 升级本地的QC
+      - 生成新的proposal
+    - 如果不是leader节点，向其他节点发送ConsensusMessage::Vote消息
+  - 处理超时消息
+    - 超时的round需要大于等于本地round
+    - 验证超时消息的合法性
+    - 升级本地round和high qc
+    - 向其他节点发送TC信息
+    - 如果是Leader节点开启新的round
+  - 处理TC消息
+  - 验证TC信息的合法性
+  - 升级本地的round
+  - 如果是leader节点开启新的round
 
