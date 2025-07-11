@@ -1,4 +1,4 @@
-<img width="673" height="507" alt="image" src="https://github.com/user-attachments/assets/4b7d68be-6033-42f5-ab4b-7eb8a0418e7e" /><h2>hoststuff原生共识</h2>
+<h2>hoststuff原生共识</h2>
 
 机器配置：MacBook, 芯片M1, 内存16GB
 
