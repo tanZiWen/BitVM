@@ -12,7 +12,7 @@
 
 
 1. 交易size: 132kb
-2. 最大tps: 323 tx/s
-3. 延迟：6/ms
-<img width="673" height="507" alt="image" src="https://github.com/user-attachments/assets/7876615e-bf38-43ae-9706-d05294fada52" />
+2. 最大tps: 513 tx/s
+3. 延迟：49/ms
+<img width="845" height="521" alt="image" src="https://github.com/user-attachments/assets/46243c69-d324-4d46-b3e8-b71fc6f8f115" />
 
