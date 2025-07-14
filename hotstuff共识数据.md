@@ -30,3 +30,7 @@
 4. batch_size: 1
 
 <img width="578" height="485" alt="image" src="https://github.com/user-attachments/assets/d67791b4-df97-48e9-b92d-4d3f9f6ebdda" />
+
+<h2>Prove Time</h2>
+<img width="781" height="202" alt="image" src="https://github.com/user-attachments/assets/6cfe5401-878e-4ed2-9e8f-0c86593af322" />
+
