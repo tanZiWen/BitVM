@@ -7,13 +7,15 @@
 3. 共识节点个数：4
 
 <h2>TEST1</h2>
-5. 交易size: 1kb
-6. 最大TPS: 121,980 tx/s
-7. batch_size: 15_000
-8. 延迟: 11 ms
+
+1. 交易size: 1kb
+2. 最大TPS: 121,980 tx/s
+3. batch_size: 15_000
+4. 延迟: 11 ms
 <img width="431" height="391" alt="image" src="https://github.com/user-attachments/assets/957b08ca-898c-4c55-88e7-644264d7fbc0" />
 
 <h2>TEST2</h2>
+
 1. 交易size: 132kb
 2. 最大tps: 513 tx/s
 3. 延迟：49/ms
@@ -21,6 +23,7 @@
 <img width="845" height="521" alt="image" src="https://github.com/user-attachments/assets/46243c69-d324-4d46-b3e8-b71fc6f8f115" />
 
 <H2>TEST3</H2>
+
 1. 交易size: 132kb
 2. 最大tps: 341 tx/s
 3. 延迟：350 ms
