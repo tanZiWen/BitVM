@@ -27,6 +27,12 @@ L1 账户模型
 1. UTXO
 2. Balance
 
+L2 ZK化程度
+1. 交易是否需要ZK化，L2交易被包含在L1中，proof size过大的问题
+
+L1与L2跨链的问题？
+1. ZK化程度多少对跨链实现是否有影响？
+
 <h2>TEST1</h2>
 1. 交易size: 1kb
 2. 最大TPS: 121,980 tx/s
