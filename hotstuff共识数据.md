@@ -48,6 +48,7 @@ L1与L2跨链的问题？
 2. 最大tps: 513 tx/s
 3. 延迟：49/ms
 4. batch_size: 15_000
+   
 <img width="845" height="521" alt="image" src="https://github.com/user-attachments/assets/46243c69-d324-4d46-b3e8-b71fc6f8f115" />
 
 <H2>TEST3</H2>
